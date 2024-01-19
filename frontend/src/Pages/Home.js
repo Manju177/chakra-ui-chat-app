@@ -1,8 +1,9 @@
 import React from 'react'
+import { Button, ButtonGroup } from '@chakra-ui/react'
 
 const Home=()=>{
   return(
-  <div>sxujck</div>
+    <Button colorScheme='blue'>Button</Button>
   )
 }
 
