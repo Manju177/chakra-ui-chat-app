@@ -3,11 +3,13 @@ const { chats } = require("./data/data");
 const dotenv=require("dotenv")
 const connectDb =require('./config/db')
 const colors=require('colors')
-
+const userRoutes =require('./routes/userRoutes')
 
 dotenv.config();
 connectDb();
 const app=express()
+//for accepting json data
+app.use(express.json())
 
 app.get('/',(req,res)=>{
     res.send("api is running")
@@ -22,6 +24,8 @@ app.get('/api/chat/:id',(req,res)=>{
    const singleChat=chats.find((c)=>c._id===req.params.id)
    res.send(singleChat)
 })
+
+app.use('/api/user',userRoutes)
 
 const PORT=process.env.PORT || 5000
 
