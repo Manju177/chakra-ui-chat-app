@@ -1,6 +1,8 @@
 import { Button, FormControl, FormLabel, Input, InputGroup, InputRightElement, VStack } from '@chakra-ui/react'
 import React, { useState } from 'react'
 import { useToast } from '@chakra-ui/react'
+import axios from 'axios';
+import {useNavigate} from 'react-router-dom'
 
 function Signup() {
     const [name, setName] = useState();
@@ -12,6 +14,7 @@ function Signup() {
     const [loading, setLoading] = useState(false)
     const[pic,setPic]=useState()
     const toast = useToast()
+    let navigate = useNavigate();
      
     const showFunction = () => {
         setShow(!show)
@@ -65,7 +68,59 @@ function Signup() {
 
 
     }
-    const handleSubmit=()=>{
+    const handleSubmit=async()=>{
+        setLoading(true)
+        if(!name||!email||!password||!confirmpwd){
+            toast({
+                title: 'Please Fill all the Feilds.',
+                status: 'warning',
+                duration: 5000,
+                isClosable: true,
+                position:"top"
+              })
+              setLoading(false)
+              return;
+        }
+        if(password!=confirmpwd){
+            toast({
+                title: 'Password Do Not Match.',
+                status: 'warning',
+                duration: 5000,
+                isClosable: true,
+                position:"top"
+              })
+              setLoading(false)
+              return;
+        }
+        try {
+            const config={
+                headers:{
+                    "Content-Type":"application/json"
+              },
+
+            };
+            const {data}=await axios.post("/api/user/",{name,email,password,pic},config);
+            toast({
+                title: 'Registration Successful',
+                status: 'success',
+                duration: 5000,
+                isClosable: true,
+                position:"top"
+              });
+              localStorage.setItem("userInfo",JSON.stringify(data))
+              setLoading(false)
+              navigate('/')
+        } catch (error) {
+            toast({
+                title: 'Error!',
+                description:error.response.data.message,
+                status: 'error',
+                duration: 5000,
+                isClosable: true,
+                position:"top"
+              });
+              setLoading(false)
+        }
 
     }
     const confirmshowFunction = () => {

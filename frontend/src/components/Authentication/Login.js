@@ -1,6 +1,9 @@
 import { Button, FormControl, FormLabel, Input, InputGroup, InputRightElement, VStack } from '@chakra-ui/react'
 import React from 'react'
 import { useState } from 'react';
+import { useToast } from '@chakra-ui/react'
+import axios from 'axios';
+import {useNavigate} from 'react-router-dom'
 
 function Login() {
     const [name, setName] = useState();
@@ -9,6 +12,9 @@ function Login() {
     const [confirmpwd, setConfirmpwd] = useState();
     const [show, setShow] = useState(false)
     const [confirmshow, setconfirmShow] = useState(false)
+    const toast = useToast()
+    const [loading,setLoading]=useState(false)
+    let navigate = useNavigate();
 
     const showFunction = () => {
         setShow(!show)
@@ -16,7 +22,48 @@ function Login() {
     const uploadImage = (pics) => {
 
     }
-    const handleSubmit=()=>{
+    const handleSubmit=async()=>{
+        setLoading(true)
+        if(!email||!password){
+            toast({
+                title: 'Please FIll all the Feilds',
+                status: 'warning',
+                duration: 5000,
+                isClosable: true,
+                position:"top"
+              })
+              return;
+        }
+        try {
+            const config={
+                headers:{
+                    "Content-Type":"application/json"
+              },
+
+            };
+            const {data}=await axios.post("http://localhost:3001/api/user/login",{email,password},config);
+            toast({
+                title: 'Login Successful',
+                status: 'success',
+                duration: 5000,
+                isClosable: true,
+                position:"top"
+              });
+              localStorage.setItem("userInfo",JSON.stringify(data))
+              setLoading(false)
+              navigate('/chats')
+        } catch (error) {
+            console.log('error',error)
+            toast({
+                title: 'Error!',
+                description:error.response.data.message,
+                status: 'error',
+                duration: 5000,
+                isClosable: true,
+                position:"top"
+              });
+              setLoading(false)
+        }
 
     }
     const handleGuestClick=()=>{
