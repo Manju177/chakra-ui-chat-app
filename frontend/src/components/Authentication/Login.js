@@ -98,7 +98,7 @@ function Login() {
 
 =
     <br/>
-    <Button colorScheme='whatsapp' variant='solid' onClick={handleSubmit} width="100%">
+    <Button colorScheme='whatsapp' variant='solid' onClick={handleSubmit} width="100%" isLoading={loading}>
         Login
     </Button>
     <Button colorScheme='red' variant='outline'  onClick={handleGuestClick} width="100%">
