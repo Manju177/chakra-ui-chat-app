@@ -1,5 +1,6 @@
 import { Button, FormControl, FormLabel, Input, InputGroup, InputRightElement, VStack } from '@chakra-ui/react'
 import React, { useState } from 'react'
+import { useToast } from '@chakra-ui/react'
 
 function Signup() {
     const [name, setName] = useState();
@@ -8,11 +9,60 @@ function Signup() {
     const [confirmpwd, setConfirmpwd] = useState();
     const [show, setShow] = useState(false)
     const [confirmshow, setconfirmShow] = useState(false)
-
+    const [loading, setLoading] = useState(false)
+    const[pic,setPic]=useState()
+    const toast = useToast()
+     
     const showFunction = () => {
         setShow(!show)
     }
     const uploadImage = (pics) => {
+        setLoading(true);
+        if(pics===undefined){
+            toast({
+                title: 'Please Select Image.',
+                description:'Bhai Image select maadopaa',
+                status: 'warning',
+                duration: 5000,
+                isClosable: true,
+                position:"top"
+              })
+              return;
+        }
+        if(pics.type==="image/jpg" || pics.type==="image/png" ){
+            const data=new FormData();
+            data.append("file",pics)
+            data.append("upload_preset","chatingapp")
+            data.append("cloud-name","manjup")
+            // data.append('Access-Control-Allow-Origin', 'http://localhost:3000')
+            // data.append('Access-Control-Allow-Origin', 'true')
+            fetch("https://api.cloudinary.com/v1_1/manjup/image/upload",{
+                method:'post',
+                body:data,
+            }).then((response)=>{
+                console.log(response)
+                response.json()
+            }).then((data)=>{
+                console.log("data",data.url.toString())
+                setPic(data.url.toString())
+                setLoading(false)
+
+            }).catch((error)=>{
+                setLoading(false)
+                console.log(error)
+            })
+        }
+     else{
+        toast({
+            title: 'Please Select Image.',
+            description:'Bhai Image select maadopaa',
+            status: 'warning',
+            duration: 5000,
+            isClosable: true,
+            position:"top"
+          })
+     }
+
 
     }
     const handleSubmit=()=>{
@@ -79,7 +129,7 @@ function Signup() {
                 />
             </FormControl>
             <br/>
-            <Button colorScheme='whatsapp' variant='solid' onClick={handleSubmit} width="100%">
+            <Button colorScheme='whatsapp' variant='solid' onClick={handleSubmit} width="100%" isLoading={loading}>
                 Sign Up
             </Button>
 
