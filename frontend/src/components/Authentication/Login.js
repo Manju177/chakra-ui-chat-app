@@ -41,7 +41,7 @@ function Login() {
               },
 
             };
-            const {data}=await axios.post("http://localhost:3001/api/user/login",{email,password},config);
+            const {data}=await axios.post("http://localhost:3000/api/user/login",{email,password},config);
             toast({
                 title: 'Login Successful',
                 status: 'success',
@@ -56,7 +56,7 @@ function Login() {
             console.log('error',error)
             toast({
                 title: 'Error!',
-                description:error.response.data.message,
+                description:error?.response?.data.message,
                 status: 'error',
                 duration: 5000,
                 isClosable: true,
