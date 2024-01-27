@@ -9,11 +9,12 @@ function ChatProvider({children}) {
     const navigate=useNavigate()
 
     useEffect(() => {
-        const user=JSON.parse(localStorage.getItem('user',JSON.stringify("userInfo")))
-        setUser(user)
-      if(!user){
-        navigate('/')
-      }
+        
+        const userInfo=JSON.parse(localStorage.getItem('userInfo'))
+        console.log(localStorage.getItem(JSON.stringify("userInfo")))
+        setUser(userInfo)
+        user??navigate('/',{replace: true})
+      
     }, [navigate])
     
 

@@ -52,7 +52,7 @@ function Login() {
               });
               localStorage.setItem("userInfo",JSON.stringify(data))
               setLoading(false)
-              navigate('/chatpage')
+              navigate('/chatpage',{replace: true})
         } catch (error) {
             console.log('error',error)
             toast({
