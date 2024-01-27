@@ -32,6 +32,7 @@ function Login() {
                 isClosable: true,
                 position:"top"
               })
+              setLoading(false)
               return;
         }
         try {
@@ -51,7 +52,7 @@ function Login() {
               });
               localStorage.setItem("userInfo",JSON.stringify(data))
               setLoading(false)
-              navigate('/chats')
+              navigate('/chatpage')
         } catch (error) {
             console.log('error',error)
             toast({
@@ -66,10 +67,7 @@ function Login() {
         }
 
     }
-    const handleGuestClick=()=>{
 
-    }
-    
   return (
     <VStack spacing="5px">
     <FormControl id="email" isRequired>
@@ -101,7 +99,11 @@ function Login() {
     <Button colorScheme='whatsapp' variant='solid' onClick={handleSubmit} width="100%" isLoading={loading}>
         Login
     </Button>
-    <Button colorScheme='red' variant='outline'  onClick={handleGuestClick} width="100%">
+    <Button colorScheme='red' variant='outline'  onClick={() => {
+          setEmail("guest@example.com");
+          setPassword("123456");
+        }}
+        width="100%">
      Guest User
     </Button>
 
