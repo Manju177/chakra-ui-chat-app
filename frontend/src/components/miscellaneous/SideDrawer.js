@@ -1,4 +1,4 @@
-import { Box, Button, MenuButton, Text, Tooltip,Menu,MenuList, Avatar, MenuItem, MenuDivider, Drawer,useDisclosure,DrawerOverlay,DrawerContent,DrawerCloseButton,DrawerHeader,DrawerBody,DrawerFooter, Input, useToast } from '@chakra-ui/react'
+import { Box, Button, MenuButton, Text, Tooltip,Menu,MenuList, Avatar, MenuItem, MenuDivider, Drawer,useDisclosure,DrawerOverlay,DrawerContent,DrawerCloseButton,DrawerHeader,DrawerBody,DrawerFooter, Input, useToast, Spinner } from '@chakra-ui/react'
 import React, { useState } from 'react'
 import { SearchIcon,BellIcon,ChevronDownIcon } from '@chakra-ui/icons'
 import { ChatState } from '../../Context/ChatProvider'
@@ -11,9 +11,9 @@ import UserList from '../UserList/UserList'
 function SideDrawer() {
    const [search,setSearch]=useState("")
    const [searchResult,setSearchResult]=useState([])
-   const [chatLoading,setChatLoading]=useState()
+   const [chatLoading,setChatLoading]=useState(false)
    const [loading,setLoading]=useState(false)
-   const {user}=ChatState()
+   const {user,selectedChat,setSelectedChat,chats,setChats}=ChatState()
    const navigate=useNavigate()
    const { isOpen, onOpen, onClose } = useDisclosure()
    const toast=useToast()
@@ -24,9 +24,36 @@ function SideDrawer() {
        navigate('/')
    }
 
-   const accessChatFun=(userid)=>{
-
-   }
+   const accessChat =async(userId)=>{
+    console.log('userid',userId)
+   
+    try {
+        setChatLoading(true)
+        const config = {
+            headers: {
+              "Content-type": "application/json",
+              Authorization: `Bearer ${user.token}`,
+            },
+          };
+        const {data} = await axios.post(`/api/chat`,{userId}, config);
+        console.log('data',data);
+        if(!chats.find((c)=>c._id ===data._id)) setChats([data,...chats])
+        setChatLoading(false)
+        setSelectedChat(data)
+        onClose();
+        
+    } catch (error) {
+        console.log('error',error);
+        toast({
+            title: 'Error fetching the chat',
+            description:error.message,
+            status: 'error',
+            duration: 5000,
+            isClosable: true,
+            position: 'top-left'
+        });
+    }    
+}
 
    const handleSearch=async ()=>{
     if(!search){
@@ -61,8 +88,6 @@ function SideDrawer() {
             })
             
         }
-
-    
    }
 
   return (
@@ -123,10 +148,10 @@ function SideDrawer() {
                 {loading ? (
                    <ChatLoading/>
                 ):(searchResult?.map(user=>(
-                    <UserList key={user._id} user={user} handleFunction={()=>accessChatFun(user._id)}/>
+                    <UserList key={user._id} user={user} handleFunction={()=>accessChat(user._id)}/>
                 )))}
         
-             
+             {chatLoading && <Spinner ml="auto" d='flex'/>}
             </DrawerBody>
             {/* <DrawerFooter>
                 <Button onClick={onClose}>Close</Button>
