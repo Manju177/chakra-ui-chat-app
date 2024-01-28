@@ -1,14 +1,69 @@
-import { Box, Button, MenuButton, Text, Tooltip,Menu,MenuList, Avatar, MenuItem } from '@chakra-ui/react'
+import { Box, Button, MenuButton, Text, Tooltip,Menu,MenuList, Avatar, MenuItem, MenuDivider, Drawer,useDisclosure,DrawerOverlay,DrawerContent,DrawerCloseButton,DrawerHeader,DrawerBody,DrawerFooter, Input, useToast } from '@chakra-ui/react'
 import React, { useState } from 'react'
 import { SearchIcon,BellIcon,ChevronDownIcon } from '@chakra-ui/icons'
 import { ChatState } from '../../Context/ChatProvider'
+import ProfileModal from './ProfileModal'
+import { useNavigate } from 'react-router-dom'
+import axios from 'axios'
+import ChatLoading from '../ChatLoading/ChatLoading'
+import UserList from '../UserList/UserList'
 
 function SideDrawer() {
    const [search,setSearch]=useState("")
    const [searchResult,setSearchResult]=useState([])
    const [chatLoading,setChatLoading]=useState()
-   const [loading,setLoading]=useState()
+   const [loading,setLoading]=useState(false)
    const {user}=ChatState()
+   const navigate=useNavigate()
+   const { isOpen, onOpen, onClose } = useDisclosure()
+   const toast=useToast()
+   console.log('userSlide',user)
+
+   const logOutHandler=()=>{
+       localStorage.removeItem('userInfo')
+       navigate('/')
+   }
+
+   const accessChatFun=(userid)=>{
+
+   }
+
+   const handleSearch=async ()=>{
+    if(!search){
+        toast({
+            title: 'Please enter a search term',
+            status: 'warning',
+            duration: 5000,
+            isClosable: true,
+            position: 'top-left'
+        })
+        return;
+    }
+        try {
+            setLoading(true)
+            const config={
+                headers:{
+                    Authorization: `Bearer ${user.token}`,
+
+                },
+            }
+            const {data}=await axios.get(`/api/user?search=${search}`,config)
+            setLoading(false)
+            setSearchResult(data);
+        } catch (error) {
+            toast({
+                title: 'Error Occured',
+                description:"Failed to Load the Search Results",
+                status: 'error',
+                duration: 5000,
+                isClosable: true,
+                position: 'top-left'
+            })
+            
+        }
+
+    
+   }
 
   return (
     <>
@@ -22,7 +77,7 @@ function SideDrawer() {
     alignItems='center'
     >
         <Tooltip label="Search Users" hasArrow placement='bottom-end'>
-        <Button variant='ghost' >
+        <Button variant='ghost' onClick={onOpen} >
         <SearchIcon color="black" />
         <Text as='cite' color='black' d={{base:"none", md:'flex'}} px='4'>Search Users</Text>
         </Button>
@@ -38,13 +93,46 @@ function SideDrawer() {
 
                 </MenuButton>
                 <MenuList color='black'>
+                    <ProfileModal user={user}>
                     <MenuItem>My Profile</MenuItem>
-                    <MenuItem>Logout</MenuItem>
+                    </ProfileModal>
+                    <MenuDivider/ >
+                    <MenuItem onClick={logOutHandler}>Logout</MenuItem>
                 </MenuList>
             </Menu>
             </Menu>
         </div>
     </Box>
+    <Drawer placement='left' isOpen={isOpen} onClose={onClose}>
+        <DrawerOverlay />
+        <DrawerContent>
+            <DrawerCloseButton />
+            <DrawerHeader boarderBottomWidth="1px">
+               Search Users
+            </DrawerHeader>
+            <DrawerBody>
+                <Box display='flex' pb={2}>
+                    <Input
+                     placeholder='Search by name or email'
+                     mr={2}
+                     value={search}
+                     onChange={(e)=>setSearch(e.target.value)}
+                    />
+                    <Button onClick={handleSearch}><SearchIcon color="black" /></Button>
+                </Box>
+                {loading ? (
+                   <ChatLoading/>
+                ):(searchResult?.map(user=>(
+                    <UserList key={user._id} user={user} handleFunction={()=>accessChatFun(user._id)}/>
+                )))}
+        
+             
+            </DrawerBody>
+            {/* <DrawerFooter>
+                <Button onClick={onClose}>Close</Button>
+            </DrawerFooter> */}
+        </DrawerContent>
+    </Drawer>
     </>
   )
 }
