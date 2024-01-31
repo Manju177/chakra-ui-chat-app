@@ -17,12 +17,12 @@ const ChatPage=()=>{
       display='flex'
       justifyContent='space-between'
       w='100%'
-      h='100%'
+      h='93vh'
       p='10px'
       >
-
+{user&&<Mychat/>}
         {user&& <ChatList/>}
-        {user&&<Mychat/>}
+        
       </Box>
   </div>
   )
