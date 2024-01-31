@@ -6,7 +6,7 @@ import { useEffect, useState } from "react";
 import { getSender } from "../Config/Config";
 import ChatLoading from "../ChatLoading/ChatLoading";
 
-import { Button } from "@chakra-ui/react";
+import { Button, Tooltip } from "@chakra-ui/react";
 import { ChatState } from "../../Context/ChatProvider";
 
 const MyChat = ({ fetchAgain }) => {
@@ -59,22 +59,24 @@ const MyChat = ({ fetchAgain }) => {
       <Box
         pb={3}
         px={3}
-        fontSize={{ base: "28px", md: "30px" }}
+        fontSize={{ base: "28px", md: "20px" }}
         fontFamily="Work sans"
-        d="flex"
+        display='flex'
         w="100%"
         justifyContent="space-between"
         alignItems="center"
+        color="black"
       >
         My Chats
-      
+        <Tooltip label="New Group" hasArrow placement='bottom-end'>
           <Button
             d="flex"
             fontSize={{ base: "17px", md: "10px", lg: "17px" }}
-            rightIcon={<AddIcon />}
+            borderRadius="100%"
+            rightIcon={<AddIcon style={{margin:"1px 0px 0px -8px"}}/>}
           >
-            New Group Chat
           </Button>
+        </Tooltip>
      
       </Box>
       <Box
@@ -93,7 +95,7 @@ const MyChat = ({ fetchAgain }) => {
               <Box
                 onClick={() => setSelectedChat(chat)}
                 cursor="pointer"
-                bg={selectedChat === chat ? "#38B2AC" : "#E8E8E8"}
+                bg={selectedChat === chat ? "#359d35b5" : "#E8E8E8"}
                 color={selectedChat === chat ? "white" : "black"}
                 px={3}
                 py={2}
