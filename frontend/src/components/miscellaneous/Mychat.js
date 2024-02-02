@@ -8,11 +8,14 @@ import ChatLoading from "../ChatLoading/ChatLoading";
 
 import { Button, Tooltip } from "@chakra-ui/react";
 import { ChatState } from "../../Context/ChatProvider";
+import GroupChatModal from "./GroupChatModal";
 
 const MyChat = ({ fetchAgain }) => {
   const [loggedUser, setLoggedUser] = useState();
 
   const { selectedChat, setSelectedChat, user, chats, setChats } = ChatState();
+
+  console.log('chats', chats);
 
   const toast = useToast();
 
@@ -68,6 +71,7 @@ const MyChat = ({ fetchAgain }) => {
         color="black"
       >
         My Chats
+        <GroupChatModal>
         <Tooltip label="New Group" hasArrow placement='bottom-end'>
           <Button
             d="flex"
@@ -77,6 +81,7 @@ const MyChat = ({ fetchAgain }) => {
           >
           </Button>
         </Tooltip>
+        </GroupChatModal>
      
       </Box>
       <Box
