@@ -16,6 +16,7 @@ import {
 
 const ProfileModal = ({ user, children }) => {
   const { isOpen, onOpen, onClose } = useDisclosure();
+  console.log('userData',user);
 
   return (
     <>
@@ -48,6 +49,7 @@ const ProfileModal = ({ user, children }) => {
               boxSize="150px"
               src={user.pic}
               alt={user.name}
+              margin='auto'
             />
             <Text
               fontSize={{ base: "28px", md: "20px" }}

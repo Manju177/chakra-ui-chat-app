@@ -8,6 +8,7 @@ import { Box } from '@chakra-ui/layout'
 
 const ChatPage=()=>{
   const {user}=ChatState()
+  const [fetchAgain,setFetchAgain]=useState()
   console.log(user)
   
   return(
@@ -20,8 +21,8 @@ const ChatPage=()=>{
       h='93vh'
       p='10px'
       >
-{user&&<Mychat/>}
-        {user&& <ChatList/>}
+{user&&<Mychat fetchAgain={fetchAgain}/>}
+        {user&& <ChatList setFetchAgain={setFetchAgain} fetchAgain={fetchAgain}/>}
         
       </Box>
   </div>

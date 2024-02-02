@@ -50,7 +50,7 @@ const MyChat = ({ fetchAgain }) => {
 
   return (
     <Box
-      d={{ base: selectedChat ? "none" : "flex", md: "flex" }}
+      display={{ base: selectedChat ? "none" : "flex", md: "flex",sm:"flex" }}
       flexDir="column"
       alignItems="center"
       p={3}
