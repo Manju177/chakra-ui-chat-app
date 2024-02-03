@@ -69,7 +69,7 @@ function SingleChat({fetchAgain,setFetchAgain}) {
         </>:(
             <Box display={'flex'} alignItems='center' h='100%' justifyContent='center'>
                 <Text pb={3} fontFamily='Woek sans' fontSize='3xl'>
-                    Click on user to start a chat
+                <marquee width="100%" direction="left" height="100px">Click on user to start a chat</marquee>
                 </Text>
             </Box>
         )
