@@ -1,5 +1,5 @@
 const express=require("express")
-const { chats } = require("./data/data");
+
 const dotenv=require("dotenv")
 const connectDb =require('./config/db')
 const colors=require('colors')
@@ -13,22 +13,13 @@ const app=express()
 //for accepting json data
 app.use(express.json())
 
-app.get('/',(req,res)=>{
-    res.send("api is running")
-})
 
-app.get('/api/chat/',(req,res)=>{
-    res.send(chats)
-})
 
-app.get('/api/chat/:id',(req,res)=>{
-//    console.log(req.params.id)
-   const singleChat=chats.find((c)=>c._id===req.params.id)
-   res.send(singleChat)
-})
+
+
 
 app.use('/api/user',userRoutes)
-app.use('/api/chat/',chatRoutes)
+app.use('/api/chat',chatRoutes)
 
 app.use(notFound)
 app.use(errorHandler)

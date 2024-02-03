@@ -32,8 +32,8 @@ const accessChat = asyncHandler(async(req,res)=>{
         };
         try {
             const createChatData =await Chat.create(chatData);
-            const FullChatData = await Chat.find({_id:createChatData._id}).populate("users","-password")
-            res.status(200).send(FullChatData);
+            const FullChatData = await Chat.findOne({_id:createChatData._id}).populate("users","-password")
+            res.status(200).json(FullChatData);
         } catch (error) {
             res.status(400);
             throw new Error(error.message);
@@ -43,7 +43,7 @@ const accessChat = asyncHandler(async(req,res)=>{
 
 const fetchChats = asyncHandler(async(req, res)=>{
     try {
-        Chat.find({users: {$elemMatch:{$eq:req.user._id}}}).then(result=>{res.send(result)})
+        Chat.find({users: {$elemMatch:{$eq:req.user._id}}})
         .populate('users','-password')
         .populate('groupAdmin','-password')
         .populate('latestMessage')

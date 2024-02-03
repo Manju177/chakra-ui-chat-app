@@ -6,8 +6,8 @@ const { accessChat,fetchChats,createGroupChat,renameGroup, addToGroup,removeFrom
 router.route('/').post(protect,accessChat);
 router.route('/').get(protect,fetchChats);
 router.route("/group").post(protect,createGroupChat);
-router.route("/renameGroup").post(protect,renameGroup);
-router.route("/removegroup").post(protect,removeFromGroup);
-router.route("/addgroup").post(protect,addToGroup);
+router.route("/renameGroup").put(protect,renameGroup);
+router.route("/removegroup").put(protect,removeFromGroup);
+router.route("/addgroup").put(protect,addToGroup);
 
 module.exports=router;

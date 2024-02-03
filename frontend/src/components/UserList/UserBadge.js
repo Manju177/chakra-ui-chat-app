@@ -6,9 +6,9 @@ function UserBadge({userVal,handleFunction}) {
     console.log('userBadge',userVal)
   return (
   <Box m='10px' gap='5px' alignItems='center' display='flex' >
-  <Avatar   size='xs' src={userVal.pic}  />
+  <Avatar   size='xs' src={userVal?.pic}  />
     <Text >
-       {userVal.name}
+       {userVal?.name}
       <SmallCloseIcon color='#c14a4a' onClick={handleFunction} cursor='pointer'/>
       </Text>
   </Box>
