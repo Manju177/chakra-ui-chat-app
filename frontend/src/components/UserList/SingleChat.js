@@ -7,6 +7,10 @@ import ProfileModal from '../miscellaneous/ProfileModal'
 import UpdateGroupChatModal from '../miscellaneous/UpdateGroupChatModal'
 import axios from 'axios'
 import AllChats from './AllChats'
+import io from 'socket.io-client'
+
+const ENDPOINT="http://localhost:5000"
+var socket,selectedChatCompare;
 
 function SingleChat({ fetchAgain, setFetchAgain }) {
     const { user, selectedChat, setSelectedChat } = ChatState()
@@ -17,6 +21,7 @@ function SingleChat({ fetchAgain, setFetchAgain }) {
     const [loading, setLoading] = useState(false)
     const [newMessage, setNewMessage] = useState()
     const [messages, setMessages] = useState([])
+    const[socketConnected,setSocketConnected] = useState(false)
     const toast = useToast()
 
     const handleChange = (e) => {
@@ -32,7 +37,13 @@ function SingleChat({ fetchAgain, setFetchAgain }) {
 useEffect(() =>{
 
     fetchMessages()
+    selectedChatCompare=selectedChat;
 },[selectedChat])
+
+
+
+
+
 const fetchMessages=async()=>{
     if(!selectedChat)return;
     try {
@@ -46,6 +57,7 @@ const fetchMessages=async()=>{
         console.log('dataahaha',data)
         setMessages(data)
         setLoading(false);
+        socket.emit('join chat',selectedChat._id)
     } catch (error) {
         toast({
             title: "Error Occured!",
@@ -60,6 +72,25 @@ const fetchMessages=async()=>{
     }
 
 }
+
+useEffect(() => {
+  socket=io(ENDPOINT);
+  socket.emit('setup',user);
+  socket.on('connection',()=>{
+    setSocketConnected(true)
+  })
+}, [])
+
+useEffect(()=>{
+    socket.on('message recived',(newmessageRecived) =>{
+        if(!selectedChatCompare || selectedChatCompare._id!==newmessageRecived.chat._id){
+                //notify
+        }else{
+        setMessages([...messages, newmessageRecived])
+        }
+    })
+})
+
     
 
     const handleEnter = async (event) => {
@@ -77,6 +108,7 @@ const fetchMessages=async()=>{
                     chatId: selectedChat._id,
                 }, config)
                 console.log('chataData', data)
+                socket.emit('new message',data)
                 setMessages([...messages, data])
         } catch (error) {
             toast({

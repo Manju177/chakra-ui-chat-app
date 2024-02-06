@@ -7,7 +7,7 @@ import { ChatState } from '../../Context/ChatProvider'
 import UserList from '../UserList/UserList';
 import UserBadge from '../UserList/UserBadge';
 
-function UpdateGroupChatModal({fetchAgain,setFetchAgain}) {
+function UpdateGroupChatModal({fetchAgain,setFetchAgain,fetchMessages}) {
     const { isOpen, onOpen, onClose } = useDisclosure();
     const [groupChatName, setGroupChatName] = useState();
     const [search, setSearch] = useState("");

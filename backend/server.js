@@ -19,6 +19,7 @@ app.use(express.json())
 
 
 
+
 app.use('/api/user',userRoutes)
 app.use('/api/chat',chatRoutes)
 app.use("/api/message", messageRoutes);
@@ -28,4 +29,35 @@ app.use(errorHandler)
 
 const PORT=process.env.PORT || 5000
 
-app.listen(5000, console.log(`server started on ${PORT}`.yellow.bold))
+const server=app.listen(5000, console.log(`server started on ${PORT}`.yellow.bold))
+
+const io=require('socket.io')(server,{
+    pingTimeOut: 60000,
+    cors:{
+        origin:'http://localhost:3000',
+        methods:['GET','POST']
+    }
+});
+
+io.on('connection',(socket)=>{
+    console.log('a user connected')
+    socket.on('setup',(userData)=>{
+        socket.join(userData._id);
+        // console.log(userData._id)
+        socket.emit("connected")
+    })
+
+    socket.on('join chat',(room)=>{
+        socket.join(room);
+        console.log('user joined chat' +room)
+    })
+
+    socket.on('new message',(newmessageRecived)=>{
+        var chat=newmessageRecived.chat;
+        if(!chat.users) return console.log("chat.users not found")
+        chat.users.forEach(user=>{
+    if(user._id==newmessageRecived.sender._id) return;
+    socket.in(user._id).emit("message recived",newmessageRecived)
+})
+    })
+})
