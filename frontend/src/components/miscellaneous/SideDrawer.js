@@ -7,17 +7,19 @@ import { useNavigate } from 'react-router-dom'
 import axios from 'axios'
 import ChatLoading from '../ChatLoading/ChatLoading'
 import UserList from '../UserList/UserList'
+import { getSender } from '../Config/Config'
+import NotificationBadge, { Effect } from 'react-notification-badge'
 
 function SideDrawer() {
    const [search,setSearch]=useState("")
    const [searchResult,setSearchResult]=useState([])
    const [chatLoading,setChatLoading]=useState(false)
    const [loading,setLoading]=useState(false)
-   const {user,selectedChat,setSelectedChat,chats,setChats}=ChatState()
+   const {user,selectedChat,setSelectedChat,chats,setChats,notification,setNotification}=ChatState()
    const navigate=useNavigate()
    const { isOpen, onOpen, onClose } = useDisclosure()
    const toast=useToast()
-   console.log('userSlide',user)
+   console.log('userSlide',user,notification.length)
 
    const logOutHandler=()=>{
        localStorage.removeItem('userInfo')
@@ -110,8 +112,25 @@ function SideDrawer() {
         <div>
             <Menu>
             <MenuButton p={1}>
+                <NotificationBadge count={notification.length} effect={Effect.SCALE}/>
                 <BellIcon fontSize="2xl" m={1}/>
             </MenuButton>
+            <MenuList color={'black'} p={3}>
+            {!notification.length && "No New Messages"}
+              {notification.map((notif) => (
+                <MenuItem
+                  key={notif._id}
+                  onClick={() => {
+                    setSelectedChat(notif.chat);
+                    setNotification(notification.filter((n) => n !== notif));
+                  }}
+                >
+                  {notif.chat.isGroupChat
+                    ? `New Message in ${notif.chat.chatName}`
+                    : `New Message from ${getSender(user, notif.chat.users)}`}
+                </MenuItem>
+              ))}
+            </MenuList>
             <Menu>
                 <MenuButton as={Button} background='none' rightIcon={<ChevronDownIcon />}>
                     <Avatar size="sm" cursor='pointer' name={user.name} src={user.pic}/>
